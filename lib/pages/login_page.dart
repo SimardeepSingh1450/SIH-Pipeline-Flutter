@@ -3,6 +3,8 @@ import 'package:sih_pipeline_project/components/my_button.dart';
 import 'package:sih_pipeline_project/components/text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:sih_pipeline_project/progress.dart';
 
 final dio = Dio();
 
@@ -14,6 +16,8 @@ class MyLoginPage extends StatefulWidget {
 }
 
 class _MyLoginPageState extends State<MyLoginPage> {
+  final _myBox = Hive.box('progressBox');
+
   //text editing controllers
   final locationIDController = TextEditingController();
 
@@ -45,29 +49,46 @@ class _MyLoginPageState extends State<MyLoginPage> {
         ' Current Password:' +
         currentPassword);
 
-    Response response =
-        await dio.post('http://localhost:4000/flutter/workerLogIn', data: {
-      'workerID': currentWorkerID,
-      'pipeLocationID': currentLocationID,
-      'password': currentPassword
-    });
-    //Setting Headers
-    response.headers.set("Content-Type", "application/json; charset=UTF-8");
-    Map<String, dynamic> responseData = response.data;
-    print(responseData["msg"]);
+    try {
+      // Handle the response
+      Response response = await dio.post(
+          'https://flutter-backend-deploy.onrender.com/flutter/workerLogIn',
+          data: {
+            'workerID': currentWorkerID,
+            'pipeLocationID': currentLocationID,
+            'password': currentPassword
+          });
 
-    if (responseData["msg"] == "User found in DB") {
-      //then route to main page with json values from DB
-      Navigator.pushNamed(context, '/mainpage', arguments: responseData);
+      //Setting Headers
+      response.headers.set("Content-Type", "application/json; charset=UTF-8");
+      Map<String, dynamic> responseData = response.data;
 
-      return;
-    } else {
-      //Unsuccessfull login
-      Fluttertoast.showToast(
-          msg: 'User not found in Database',
-          backgroundColor: Colors.black,
-          gravity: ToastGravity.BOTTOM,
-          fontSize: 16);
+      print(responseData["msg"]);
+
+      if (responseData["msg"] == "User found in DB") {
+        print('Response Data at Login from DB\n');
+        print(responseData);
+
+        //Store the cached data in hiveDB
+        _myBox.put('currentProgress', responseData["currentProgress"]);
+        //Set water theft as false
+        _myBox.put('waterTheft', false);
+
+        //then route to main page with json values from DB
+        Navigator.pushNamed(context, '/mainpage', arguments: responseData);
+
+        return;
+      } else {
+        //Unsuccessfull login
+        Fluttertoast.showToast(
+            msg: 'User not found in Database',
+            backgroundColor: Colors.black,
+            gravity: ToastGravity.BOTTOM,
+            fontSize: 16);
+      }
+    } catch (e) {
+      // Handle errors, log, or display an error message
+      print('Error: $e');
     }
 
     return;
@@ -79,11 +100,11 @@ class _MyLoginPageState extends State<MyLoginPage> {
       backgroundColor: Colors.grey[200],
       body: SingleChildScrollView(
         child: Center(
-          child: Column(children: [
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             const SizedBox(height: 100),
 
             //Icon
-            Icon(Icons.water_damage, size: 100),
+            Image.asset('lib/images/pipe.png', height: 100),
 
             const SizedBox(height: 20),
 
@@ -110,7 +131,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
             MyTextField(
               controller: workerIDController,
               obscureText: false,
-              hintText: 'Enter your Worker-ID',
+              hintText: 'Enter your Supervisor-ID',
             ),
 
             //Password

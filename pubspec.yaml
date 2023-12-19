@@ -38,6 +38,11 @@ dependencies:
   dio: ^5.4.0
   fluttertoast: ^8.2.4
   percent_indicator: ^4.0.1
+  http: ^1.1.2
+  hive:
+  hive_flutter:
+  build_runner:
+
 
 dev_dependencies:
   flutter_test:
