@@ -50,12 +50,13 @@ class _MyLoginPageState extends State<MyLoginPage> {
 
     try {
       // Handle the response
-      Response response =
-          await dio.post('http://localhost:4000/flutter/workerLogIn', data: {
-        'workerID': currentWorkerID,
-        'pipeLocationID': currentLocationID,
-        'password': currentPassword
-      });
+      Response response = await dio.post(
+          'https://flutter-backend-deploy.onrender.com/flutter/workerLogIn',
+          data: {
+            'workerID': currentWorkerID,
+            'pipeLocationID': currentLocationID,
+            'password': currentPassword
+          });
 
       //Setting Headers
       response.headers.set("Content-Type", "application/json; charset=UTF-8");

@@ -282,8 +282,9 @@ class _MainPageState extends State<MainPage> {
         'superVisorID': superVisorID,
         'superVisorName': superVisorName
       };
-      Response response = await dio
-          .post('http://localhost:4000/flutter/theftMailer', data: sendData);
+      Response response = await dio.post(
+          'https://flutter-backend-deploy.onrender.com/flutter/theftMailer',
+          data: sendData);
 
       //Setting Headers
       response.headers.set("Content-Type", "application/json; charset=UTF-8");
@@ -344,8 +345,9 @@ class _MainPageState extends State<MainPage> {
         'stageName': stageName,
         'superVisorID': supervisorID
       };
-      Response response = await dio
-          .post('http://localhost:4000/flutter/workProgress', data: sendData);
+      Response response = await dio.post(
+          'https://flutter-backend-deploy.onrender.com/flutter/workProgress',
+          data: sendData);
 
       //Setting Headers
       response.headers.set("Content-Type", "application/json; charset=UTF-8");
@@ -480,8 +482,9 @@ class _MainPageState extends State<MainPage> {
         'stageName': stageName,
         'superVisorID': supervisorID
       };
-      Response response = await dio
-          .post('http://localhost:4000/flutter/workProgress', data: sendData);
+      Response response = await dio.post(
+          'https://flutter-backend-deploy.onrender.com/flutter/workProgress',
+          data: sendData);
 
       //Setting Headers
       response.headers.set("Content-Type", "application/json; charset=UTF-8");
